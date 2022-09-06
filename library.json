@@ -1,0 +1,19 @@
+{
+    "name": "TwoWire",
+    "keywords": "twowire, i2c, iic",
+    "description": "Library handles Master and Slave communication over TwoWire interface.",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Majoneza/TwoWire.git"
+    },
+    "version": "1.0.0",
+    "authors": {
+        "name": "Majoneza"
+    },
+    "license": "MIT",
+    "frameworks": ["arduino"],
+    "platforms": ["atmelavr"],
+    "build": {
+        "libArchive": false
+    }
+}
