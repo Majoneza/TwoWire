@@ -75,7 +75,7 @@ void SlaveReceiver::interruptVectorRoutine()
         else
         {
             TWCR &= ~(_BV(TWEA));
-            TWCR = TWCR_W(_BV(TWINT) | _BV(TWEN));
+            TWCR = TWCR_W(_BV(TWINT));
         }
         break;
     // Ignore NACK

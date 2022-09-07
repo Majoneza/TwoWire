@@ -58,6 +58,7 @@ Status MasterConfiguration::_signalStart(uint32_t t)
     case TW_REP_START:
         return Status::Success;
     case TW_BUS_ERROR:
+        TWCR = TWCR_W(_BV(TWINT) | _BV(TWSTO));
         return Status::Error;
     default:
         return Status::Unknown;
@@ -78,6 +79,7 @@ Status MasterConfiguration::_signalStopStart(uint32_t t)
     case TW_REP_START:
         return Status::Success;
     case TW_BUS_ERROR:
+        TWCR = TWCR_W(_BV(TWINT) | _BV(TWSTO));
         return Status::Error;
     default:
         return Status::Unknown;
@@ -99,7 +101,6 @@ Status MasterConfiguration::_addressSlaveW(uint32_t t, uint8_t address)
     case TW_MT_SLA_ACK:
         return Status::Success;
     case TW_MT_SLA_NACK:
-        signalStop();
         return Status::AddressNACK;
     // No need to stop when arbitration lost
     case TW_MT_ARB_LOST:
@@ -109,6 +110,7 @@ Status MasterConfiguration::_addressSlaveW(uint32_t t, uint8_t address)
     case TW_ST_ARB_LOST_SLA_ACK:
         return Status::AddressedAsSlave;
     case TW_BUS_ERROR:
+        TWCR = TWCR_W(_BV(TWINT) | _BV(TWSTO));
         return Status::Error;
     default:
         return Status::Unknown;
@@ -130,12 +132,12 @@ Status MasterConfiguration::_sendData(uint32_t t, uint8_t data)
     case TW_MT_DATA_ACK:
         return Status::Success;
     case TW_MT_DATA_NACK:
-        signalStop();
         return Status::DataNACK;
     case TW_MT_ARB_LOST:
         // No need to stop when arbitration lost
         return Status::BusLost;
     case TW_BUS_ERROR:
+        TWCR = TWCR_W(_BV(TWINT) | _BV(TWSTO));
         return Status::Error;
     default:
         return Status::Unknown;
@@ -146,7 +148,7 @@ Status MasterConfiguration::_sendData(uint32_t t, const uint8_t *data, size_t si
 {
     while (size > 0)
     {
-        auto s = _sendData(*data, t);
+        auto s = _sendData(t, *data);
         if (s != Status::Success)
             return s;
         data++;
@@ -170,7 +172,6 @@ Status MasterConfiguration::_addressSlaveR(uint32_t t, uint8_t address)
     case TW_MR_SLA_ACK:
         return Status::Success;
     case TW_MR_SLA_NACK:
-        signalStop();
         return Status::AddressNACK;
     // No need to stop when arbitration lost
     case TW_MR_ARB_LOST:
@@ -180,6 +181,7 @@ Status MasterConfiguration::_addressSlaveR(uint32_t t, uint8_t address)
     case TW_ST_ARB_LOST_SLA_ACK:
         return Status::AddressedAsSlave;
     case TW_BUS_ERROR:
+        TWCR = TWCR_W(_BV(TWINT) | _BV(TWSTO));
         return Status::Error;
     default:
         return Status::Unknown;
@@ -206,6 +208,7 @@ Status MasterConfiguration::_receiveData(uint32_t t, uint8_t *data)
         // No need to stop when arbitration lost
         return Status::BusLost;
     case TW_BUS_ERROR:
+        TWCR = TWCR_W(_BV(TWINT) | _BV(TWSTO));
         return Status::Error;
     default:
         return Status::Unknown;
@@ -231,6 +234,7 @@ Status MasterConfiguration::_receiveData(uint32_t t, uint8_t *data, size_t size)
             // No need to stop when arbitration lost
             return Status::BusLost;
         case TW_BUS_ERROR:
+            TWCR = TWCR_W(_BV(TWINT) | _BV(TWSTO));
             return Status::Error;
         default:
             return Status::Unknown;

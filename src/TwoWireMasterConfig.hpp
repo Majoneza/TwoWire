@@ -25,8 +25,11 @@ namespace TwoWire
         Status _receive(uint32_t t, uint8_t address, uint8_t *data, bool stop);
         Status _receive(uint32_t t, uint8_t address, uint8_t *data, size_t size, bool stop);
 
+        Status _receiveRegister(uint32_t t, uint8_t address, uint8_t registerAddress, uint8_t *data, bool repeatStart, bool stop);
+        Status _receiveRegister(uint32_t t, uint8_t address, uint8_t registerAddress, uint8_t *data, size_t size, bool repeatStart, bool stop);
+
         template <typename... Args>
-        Status _handleBusLost(Status (MasterConfig::*f)(uint32_t, Args...), uint32_t t, Args... args)
+        Status _handleBusLost(TimeoutFunction<MasterConfig, Args...> f, uint32_t t, Args... args)
         {
             switch (busLostBehaviour)
             {
@@ -42,8 +45,24 @@ namespace TwoWire
             }
         }
 
+        template<typename... Args>
+        Status _handleUnsuccessfulStatus(Status s, TimeoutFunction<MasterConfig, Args...> f, uint32_t t, Args... args)
+        {
+            switch (s)
+            {
+            case Status::BusLost:
+                return _handleBusLost<Args...>(f, t, args...);
+            case Status::AddressNACK:
+            case Status::DataNACK:
+                signalStop();
+                [[fallthrough]];
+            default:
+                return s;
+            }
+        }
+
         template <typename... Args>
-        Status _executeTimedInstruction(Status (MasterConfig::*f)(uint32_t, Args...), Args... args)
+        Status _executeTimedInstruction(TimeoutFunction<MasterConfig, Args...> f, Args... args)
         {
             uint32_t t = micros();
             // Execute instruction
@@ -97,12 +116,13 @@ namespace TwoWire
          * @param address Address of the slave device
          * @param registerAddress Address of the slave device register
          * @param data Where to receive the data
+         * @param repeatStart Does the device support repeat start (or should stop start be used)
          * @param stop Whether to release the bus on completion
          * @return Status Status of the function
          */
-        Status receiveRegister(uint8_t address, uint8_t registerAddress, uint8_t *data, bool stop);
-        Status receiveRegister(uint8_t address, uint8_t registerAddress, uint8_t *data);
-        Status receiveRegister(uint8_t address, uint8_t registerAddress, uint8_t *data, size_t size, bool stop);
-        Status receiveRegister(uint8_t address, uint8_t registerAddress, uint8_t *data, size_t size);
+        Status receiveRegister(uint8_t address, uint8_t registerAddress, uint8_t *data, bool repeatStart, bool stop);
+        Status receiveRegister(uint8_t address, uint8_t registerAddress, uint8_t *data, bool repeatStart);
+        Status receiveRegister(uint8_t address, uint8_t registerAddress, uint8_t *data, size_t size, bool repeatStart, bool stop);
+        Status receiveRegister(uint8_t address, uint8_t registerAddress, uint8_t *data, size_t size, bool repeatStart);
     };
 }

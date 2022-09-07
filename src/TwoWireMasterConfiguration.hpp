@@ -25,7 +25,7 @@ namespace TwoWire
             AddressedAsSlave,
             // Provided timeout expired during operation
             Timeout,
-            // TWI raised an error of unknown origin
+            // Error raised when calling start or stop unexpectedly
             Error,
             // Error was unexpected and its cause is unknown
             Unknown
@@ -33,6 +33,9 @@ namespace TwoWire
 
     protected:
         uint32_t timeout;
+
+        template<typename Member, typename... Args>
+        using TimeoutFunction = Status (Member::*)(uint32_t, Args...);
 
         bool _awaitTWINT(uint32_t t);
 
@@ -53,7 +56,7 @@ namespace TwoWire
         Status _receiveData(uint32_t t, uint8_t *data, size_t size);
 
         template <typename... Args>
-        Status _executeTimedInstruction(Status (MasterConfiguration::*f)(uint32_t, Args...), Args... args)
+        Status _executeTimedInstruction(TimeoutFunction<MasterConfiguration, Args...> f, Args... args)
         {
             uint32_t t = micros();
             // Execute instruction

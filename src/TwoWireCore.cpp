@@ -99,7 +99,7 @@ bool TwoWire::isErrored()
 
 void TwoWire::clearError()
 {
-    TWCR |= _BV(TWINT) | _BV(TWSTO);
+    TWCR = TWCR_W(_BV(TWINT) | _BV(TWSTO));
 }
 
 void TwoWire::clearErrorIfSet()
