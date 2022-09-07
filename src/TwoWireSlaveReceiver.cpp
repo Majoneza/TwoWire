@@ -1,5 +1,7 @@
 #include "TwoWireSlaveReceiver.hpp"
 
+#include "TwoWireCore.hpp"
+
 #include <compat/twi.h>
 
 using namespace TwoWire;
@@ -53,13 +55,13 @@ void SlaveReceiver::interruptVectorRoutine()
     case TW_SR_ARB_LOST_GCALL_ACK:
         if (count < size)
         {
-            TWCR |= _BV(TWINT) | _BV(TWEA);
+            TWCR = TWCR_W(_BV(TWINT) | _BV(TWEA));
             count = 0;
         }
         else
         {
             TWCR &= ~(_BV(TWEA));
-            TWCR |= _BV(TWINT);
+            TWCR = TWCR_W(_BV(TWINT));
         }
         break;
     case TW_SR_DATA_ACK:
@@ -68,12 +70,12 @@ void SlaveReceiver::interruptVectorRoutine()
         count++;
         if (count < size)
         {
-            TWCR |= _BV(TWINT) | _BV(TWEA);
+            TWCR = TWCR_W(_BV(TWINT) | _BV(TWEA));
         }
         else
         {
             TWCR &= ~(_BV(TWEA));
-            TWCR |= _BV(TWINT);
+            TWCR = TWCR_W(_BV(TWINT) | _BV(TWEN));
         }
         break;
     // Ignore NACK

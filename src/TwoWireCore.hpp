@@ -2,6 +2,9 @@
 
 #include <stdint.h>
 
+#define TWCR_UNUSED (TWCR & (_BV(TWEA) | _BV(TWWC) | _BV(TWEN) | _BV(TWIE)))
+#define TWCR_W(d) ((d) | TWCR_UNUSED)
+
 namespace TwoWire
 {
     enum class BitRatePrescaler : int8_t

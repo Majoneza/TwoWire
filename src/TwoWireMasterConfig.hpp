@@ -21,11 +21,11 @@ namespace TwoWire
 
         Status _send(uint32_t t, uint8_t address, uint8_t data, bool stop);
         Status _send(uint32_t t, uint8_t address, const uint8_t *data, size_t size, bool stop);
-        
+
         Status _receive(uint32_t t, uint8_t address, uint8_t *data, bool stop);
         Status _receive(uint32_t t, uint8_t address, uint8_t *data, size_t size, bool stop);
 
-        template<typename... Args>
+        template <typename... Args>
         Status _handleBusLost(Status (MasterConfig::*f)(uint32_t, Args...), uint32_t t, Args... args)
         {
             switch (busLostBehaviour)
@@ -90,5 +90,19 @@ namespace TwoWire
         Status receive(uint8_t address, uint8_t *data);
         Status receive(uint8_t address, uint8_t *data, size_t size, bool stop);
         Status receive(uint8_t address, uint8_t *data, size_t size);
+
+        /**
+         * @brief Receive slave device register contents
+         *
+         * @param address Address of the slave device
+         * @param registerAddress Address of the slave device register
+         * @param data Where to receive the data
+         * @param stop Whether to release the bus on completion
+         * @return Status Status of the function
+         */
+        Status receiveRegister(uint8_t address, uint8_t registerAddress, uint8_t *data, bool stop);
+        Status receiveRegister(uint8_t address, uint8_t registerAddress, uint8_t *data);
+        Status receiveRegister(uint8_t address, uint8_t registerAddress, uint8_t *data, size_t size, bool stop);
+        Status receiveRegister(uint8_t address, uint8_t registerAddress, uint8_t *data, size_t size);
     };
 }

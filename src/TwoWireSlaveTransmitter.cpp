@@ -1,5 +1,7 @@
 #include "TwoWireSlaveTransmitter.hpp"
 
+#include "TwoWireCore.hpp"
+
 #include <compat/twi.h>
 
 using namespace TwoWire;
@@ -46,13 +48,13 @@ void SlaveTransmitter::interruptVectorRoutine()
         if (count < size)
         {
             TWDR = data[count];
-            TWCR |= _BV(TWINT) | _BV(TWEA);
+            TWCR = TWCR_W(_BV(TWINT) | _BV(TWEA));
             count++;
         }
         else
         {
             TWCR &= ~(_BV(TWEA));
-            TWCR |= _BV(TWINT);
+            TWCR = TWCR_W(_BV(TWINT));
         }
         break;
     // Ignore NACK or LAST_DATA

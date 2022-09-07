@@ -28,12 +28,12 @@ void MasterConfiguration::disableTimeout()
 
 void MasterConfiguration::acceptBusLost()
 {
-    TWCR |= _BV(TWINT);
+    TWCR = TWCR_W(_BV(TWINT));
 }
 
 void MasterConfiguration::signalStop()
 {
-    TWCR |= _BV(TWINT) | _BV(TWSTO);
+    TWCR = TWCR_W(_BV(TWINT) | _BV(TWSTO));
 }
 
 bool MasterConfiguration::_awaitTWINT(uint32_t t)
@@ -47,12 +47,10 @@ bool MasterConfiguration::_awaitTWINT(uint32_t t)
 Status MasterConfiguration::_signalStart(uint32_t t)
 {
     // Send START condition
-    TWCR |= _BV(TWINT) | _BV(TWSTA);
+    TWCR = TWCR_W(_BV(TWINT) | _BV(TWSTA));
     // Wait for TWINT or timeout
     if (_awaitTWINT(t))
         return Status::Timeout;
-    // Clear START flag
-    TWCR &= ~(_BV(TWSTA));
     // Check status
     switch (TW_STATUS)
     {
@@ -69,12 +67,10 @@ Status MasterConfiguration::_signalStart(uint32_t t)
 Status MasterConfiguration::_signalStopStart(uint32_t t)
 {
     // Send STOP|START condition
-    TWCR |= _BV(TWINT) | _BV(TWSTO) | _BV(TWSTA);
+    TWCR = TWCR_W(_BV(TWINT) | _BV(TWSTO) | _BV(TWSTA));
     // Wait for TWINT or timeout
     if (_awaitTWINT(t))
         return Status::Timeout;
-    // Clear START flag
-    TWCR &= ~(_BV(TWSTA));
     // Check status
     switch (TW_STATUS)
     {
@@ -92,8 +88,8 @@ Status MasterConfiguration::_addressSlaveW(uint32_t t, uint8_t address)
 {
     // Set address (SLA+W)
     TWDR = (address << 1) | TW_WRITE;
-    // Send SLA+R/W
-    TWCR |= _BV(TWINT);
+    // Send SLA+W
+    TWCR = TWCR_W(_BV(TWINT));
     // Wait for TWINT or timeout
     if (_awaitTWINT(t))
         return Status::Timeout;
@@ -124,7 +120,7 @@ Status MasterConfiguration::_sendData(uint32_t t, uint8_t data)
     // Set data
     TWDR = data;
     // Send data
-    TWCR |= _BV(TWINT);
+    TWCR = TWCR_W(_BV(TWINT));
     // Wait for TWINT or timeout
     if (_awaitTWINT(t))
         return Status::Timeout;
@@ -163,8 +159,8 @@ Status MasterConfiguration::_addressSlaveR(uint32_t t, uint8_t address)
 {
     // Set address (SLA+R)
     TWDR = (address << 1) | TW_READ;
-    // Send SLA+R/W
-    TWCR |= _BV(TWINT);
+    // Send SLA+R
+    TWCR = TWCR_W(_BV(TWINT));
     // Wait for TWINT or timeout
     if (_awaitTWINT(t))
         return Status::Timeout;
@@ -196,7 +192,7 @@ Status MasterConfiguration::_receiveData(uint32_t t, uint8_t *data)
     // Set to read only 1 byte
     TWCR &= ~(_BV(TWEA));
     // Read data
-    TWCR |= _BV(TWINT);
+    TWCR = TWCR_W(_BV(TWINT));
     // Wait for TWINT or timeout
     if (_awaitTWINT(t))
         return Status::Timeout;
@@ -222,7 +218,7 @@ Status MasterConfiguration::_receiveData(uint32_t t, uint8_t *data, size_t size)
     while (size > 1)
     {
         // Set to read more than 1 byte
-        TWCR |= _BV(TWINT) | _BV(TWEA);
+        TWCR = TWCR_W(_BV(TWINT) | _BV(TWEA));
         // Wait for TWINT or timeout
         if (_awaitTWINT(t))
             return Status::Timeout;

@@ -90,13 +90,13 @@ Slave::Status Slave::getStatus()
 
 void Slave::acceptNextData()
 {
-    TWCR |= _BV(TWINT) | _BV(TWEA);
+    TWCR = TWCR_W(_BV(TWINT) | _BV(TWEA));
 }
 
 void Slave::declineNextData()
 {
     TWCR &= ~(_BV(TWEA));
-    TWCR |= _BV(TWINT);
+    TWCR = TWCR_W(_BV(TWINT));
 }
 
 uint8_t Slave::getData()
@@ -107,12 +107,12 @@ uint8_t Slave::getData()
 void Slave::sendData(uint8_t data)
 {
     TWDR = data;
-    TWCR |= _BV(TWINT) | _BV(TWEA);
+    TWCR = TWCR_W(_BV(TWINT) | _BV(TWEA));
 }
 
 void Slave::sendLastData(uint8_t data)
 {
     TWDR = data;
     TWCR &= ~(_BV(TWEA));
-    TWCR |= _BV(TWINT);
+    TWCR = TWCR_W(_BV(TWINT));
 }
