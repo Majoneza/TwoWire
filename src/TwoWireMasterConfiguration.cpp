@@ -26,16 +26,6 @@ void MasterConfiguration::disableTimeout()
     this->timeout = (uint32_t)(-1);
 }
 
-void MasterConfiguration::acceptBusLost()
-{
-    TWCR = TWCR_W(_BV(TWINT));
-}
-
-void MasterConfiguration::signalStop()
-{
-    TWCR = TWCR_W(_BV(TWINT) | _BV(TWSTO));
-}
-
 bool MasterConfiguration::_awaitTWINT(uint32_t t)
 {
     while (!(TWCR & _BV(TWINT)) && (uint32_t)micros() - t <= timeout)

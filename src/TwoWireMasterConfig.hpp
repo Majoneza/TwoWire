@@ -55,7 +55,10 @@ namespace TwoWire
             case Status::AddressNACK:
             case Status::DataNACK:
                 signalStop();
-                [[fallthrough]];
+                return s;
+            case Status::Error:
+                clearError();
+                return s;
             default:
                 return s;
             }
@@ -72,10 +75,29 @@ namespace TwoWire
     public:
         using MasterConfiguration::Status;
 
-        using MasterConfiguration::MasterConfiguration;
-
         using MasterConfiguration::setTimeout;
-        using MasterConfiguration::signalStop;
+        using MasterConfiguration::disableTimeout;
+
+        /**
+         * @brief Create Master Config
+         *
+         * @param timeout Timeout in microseconds
+         * @param busLostBehaviour Behaviour when the bus is lost to another master
+         */
+        MasterConfig(uint32_t timeout, BusLostBehaviour behaviour);
+
+        /**
+         * @brief Create Master Config
+         *
+         * @param timeout Timeout in microseconds
+         */
+        MasterConfig(uint32_t timeout);
+
+        /**
+         * @brief Create Master Config
+         *
+         */
+        MasterConfig();
 
         /**
          * @brief Set the behaviour of the TWI when bus is lost to another master

@@ -102,13 +102,13 @@ namespace TwoWire
      * @brief Allow other devices to communicate with this TWI device as slave
      *
      */
-    void allowSlaveCommunication();
+    void allowSlaveMode();
 
     /**
      * @brief Disallow other devices to communicate with this TWI device as slave
      *
      */
-    void disallowSlaveCommunication();
+    void disallowSlaveMode();
 
     /**
      * @brief Allow TWI to be addressed by 0000 000 (general call address)
@@ -133,6 +133,30 @@ namespace TwoWire
      *
      */
     void disableInterrupt();
+
+    /**
+     * @brief Activate pull-up on SCL & SDA pins
+     * 
+     */
+    void activatePullup();
+
+    /**
+     * @brief Deactivate pull-up on SCL & SDA pins
+     * 
+     */
+    void deactivatePullup();
+
+    /**
+     * @brief Signal stop to other devices
+     *
+     */
+    void signalStop();
+
+    /**
+     * @brief Acknowledge TWI status (check it before)
+     * 
+     */
+    void acknowledgeStatus();
 
     /**
      * @brief Check if the TWI is in error

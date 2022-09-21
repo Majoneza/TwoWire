@@ -62,12 +62,12 @@ uint32_t TwoWire::getFrequency()
     return F_CPU / (16 + 2 * TWBR * (TWSR & (_BV(TWPS1) | _BV(TWPS0))));
 }
 
-void TwoWire::allowSlaveCommunication()
+void TwoWire::allowSlaveMode()
 {
     TWCR |= _BV(TWEA);
 }
 
-void TwoWire::disallowSlaveCommunication()
+void TwoWire::disallowSlaveMode()
 {
     TWCR &= ~(_BV(TWEA));
 }
@@ -90,6 +90,36 @@ void TwoWire::enableInterrupt()
 void TwoWire::disableInterrupt()
 {
     TWCR &= ~(_BV(TWIE));
+}
+
+void TwoWire::activatePullup()
+{
+    // For compatibility we are not using DDR and PORT
+    pinMode(SCL, INPUT);
+    pinMode(SDA, INPUT);
+    //
+    digitalWrite(SCL, HIGH);
+    digitalWrite(SDA, HIGH);
+}
+
+void TwoWire::deactivatePullup()
+{
+    // For compatibility we are not using DDR and PORT
+    pinMode(SCL, INPUT);
+    pinMode(SDA, INPUT);
+    //
+    digitalWrite(SCL, LOW);
+    digitalWrite(SDA, LOW);
+}
+
+void TwoWire::signalStop()
+{
+    TWCR = TWCR_W(_BV(TWINT) | _BV(TWSTO));
+}
+
+void TwoWire::acknowledgeStatus()
+{
+    TWCR = TWCR_W(_BV(TWINT));
 }
 
 bool TwoWire::isErrored()

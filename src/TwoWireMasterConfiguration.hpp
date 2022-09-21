@@ -68,7 +68,6 @@ namespace TwoWire
          * @brief Create Master Configuration
          *
          * @param timeout Timeout in microseconds
-         * @param busLostBehaviour Behaviour when the bus is lost to another master
          */
         MasterConfiguration(uint32_t timeout);
 
@@ -91,18 +90,6 @@ namespace TwoWire
          * 
          */
         void disableTimeout();
-
-        /**
-         * @brief Accept bus lost (insted of signaling start)
-         * 
-         */
-        void acceptBusLost();
-
-        /**
-         * @brief Signal stop to slave devices
-         *
-         */
-        void signalStop();
 
         /**
          * @brief Signal start to slave devices

@@ -11,7 +11,7 @@ namespace TwoWire
 {
     // Master enums
     using MStatus = TwoWire::MasterConfiguration::Status;
-    using MBusBehaviour = TwoWire::MasterConfig::BusLostBehaviour;
+    using MBusLostBehaviour = TwoWire::MasterConfig::BusLostBehaviour;
     // Slave enums
     using SBasicStatus = TwoWire::Slave::BasicStatus;
     using SStatus = TwoWire::Slave::Status;

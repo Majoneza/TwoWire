@@ -14,12 +14,12 @@ namespace TwoWire
             SignalReceived,
             // Receiver
             AddressedAsReceiver,
-            AcceptedDataReceived,
-            DeclinedDataReceived,
+            DataReceived,
+            LastDataReceived,
             // Transmitter
             AddressedAsTransmitter,
-            NextDataAccepted,
-            NextDataDeclined,
+            SentDataAccepted,
+            SentDataDeclined,
             MoreDataRequest,
             //
             Unknown
@@ -36,15 +36,15 @@ namespace TwoWire
             BusLostDirectlyAddressedAsReceiver,
             GeneralCallAddressedAsReceiver,
             BusLostGeneralCallAdressedAsReceiver,
-            DirectAcceptedDataReceived,
-            DirectDeclinedDataReceived,
-            GeneralCallAcceptedDataReceived,
-            GeneralCallDeclinedDataReceived,
+            DirectDataReceived,
+            DirectLastDataReceived,
+            GeneralCallDataReceived,
+            GeneralCallLastDataReceived,
             // Transmitter
             DirectlyAddressedAsTransmitter,
             BusLostDirectlyAddressedAsTransmitter,
-            NextDataAccepted,
-            NextDataDeclined,
+            SentDataAccepted,
+            SentDataDeclined,
             MoreDataRequest,
             //
             Unknown
@@ -65,15 +65,15 @@ namespace TwoWire
         Status getStatus();
 
         /**
-         * @brief Accept next coming data
+         * @brief Receive next data
          *
          */
-        void acceptNextData();
+        void receiveNextData();
         /**
-         * @brief Decline next coming data
+         * @brief Receive next data declaring its the last
          *
          */
-        void declineNextData();
+        void receiveLastData();
         /**
          * @brief Get current data
          *

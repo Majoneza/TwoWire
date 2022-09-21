@@ -23,18 +23,18 @@ Slave::BasicStatus Slave::getBasicStatus()
         return BasicStatus::AddressedAsReceiver;
     case TW_SR_DATA_ACK:
     case TW_SR_GCALL_DATA_ACK:
-        return BasicStatus::AcceptedDataReceived;
+        return BasicStatus::DataReceived;
     case TW_SR_DATA_NACK:
     case TW_SR_GCALL_DATA_NACK:
-        return BasicStatus::DeclinedDataReceived;
+        return BasicStatus::LastDataReceived;
     // Transmitter
     case TW_ST_SLA_ACK:
     case TW_ST_ARB_LOST_SLA_ACK:
         return BasicStatus::AddressedAsTransmitter;
     case TW_ST_DATA_ACK:
-        return BasicStatus::NextDataAccepted;
+        return BasicStatus::SentDataAccepted;
     case TW_ST_DATA_NACK:
-        return BasicStatus::NextDataDeclined;
+        return BasicStatus::SentDataDeclined;
     case TW_ST_LAST_DATA:
         return BasicStatus::MoreDataRequest;
     //
@@ -64,22 +64,22 @@ Slave::Status Slave::getStatus()
     case TW_SR_ARB_LOST_GCALL_ACK:
         return Status::BusLostGeneralCallAdressedAsReceiver;
     case TW_SR_DATA_ACK:
-        return Status::DirectAcceptedDataReceived;
+        return Status::DirectDataReceived;
     case TW_SR_GCALL_DATA_ACK:
-        return Status::GeneralCallAcceptedDataReceived;
+        return Status::GeneralCallDataReceived;
     case TW_SR_DATA_NACK:
-        return Status::DirectDeclinedDataReceived;
+        return Status::DirectLastDataReceived;
     case TW_SR_GCALL_DATA_NACK:
-        return Status::GeneralCallDeclinedDataReceived;
+        return Status::GeneralCallLastDataReceived;
     // Transmitter
     case TW_ST_SLA_ACK:
         return Status::DirectlyAddressedAsTransmitter;
     case TW_ST_ARB_LOST_SLA_ACK:
         return Status::BusLostDirectlyAddressedAsTransmitter;
     case TW_ST_DATA_ACK:
-        return Status::NextDataAccepted;
+        return Status::SentDataAccepted;
     case TW_ST_DATA_NACK:
-        return Status::NextDataDeclined;
+        return Status::SentDataDeclined;
     case TW_ST_LAST_DATA:
         return Status::MoreDataRequest;
     //
@@ -88,12 +88,12 @@ Slave::Status Slave::getStatus()
     }
 }
 
-void Slave::acceptNextData()
+void Slave::receiveNextData()
 {
     TWCR = TWCR_W(_BV(TWINT) | _BV(TWEA));
 }
 
-void Slave::declineNextData()
+void Slave::receiveLastData()
 {
     TWCR &= ~(_BV(TWEA));
     TWCR = TWCR_W(_BV(TWINT));

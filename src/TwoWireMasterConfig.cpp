@@ -4,6 +4,21 @@ using namespace TwoWire;
 
 using Status = MasterConfig::Status;
 
+MasterConfig::MasterConfig(uint32_t timeout, BusLostBehaviour behaviour)
+    : MasterConfiguration(timeout), busLostBehaviour(behaviour)
+{
+}
+
+MasterConfig::MasterConfig(uint32_t timeout)
+    : MasterConfiguration(timeout), busLostBehaviour(BusLostBehaviour::Abort)
+{
+}
+
+MasterConfig::MasterConfig()
+    : MasterConfiguration(), busLostBehaviour(BusLostBehaviour::Abort)
+{
+}
+
 void MasterConfig::setBusLostBehaviour(BusLostBehaviour behaviour)
 {
     this->busLostBehaviour = behaviour;
