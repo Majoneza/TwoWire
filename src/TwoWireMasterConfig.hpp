@@ -2,14 +2,6 @@
 
 #include "TwoWireMasterConfiguration.hpp"
 
-#define CHECK_RETURN_STATUS(expression) \
-    if (s != Status::Success) \
-    { \
-        if (_handleBadStatus(s, t)) \
-            return expression; \
-        return s; \
-    }
-
 namespace TwoWire
 {
     class MasterConfig : protected MasterConfiguration
