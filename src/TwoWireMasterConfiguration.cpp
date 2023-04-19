@@ -238,40 +238,40 @@ Status MasterConfiguration::_receiveData(uint32_t t, uint8_t *data, size_t size)
 
 Status MasterConfiguration::signalStart()
 {
-    return _executeTimedInstruction(&MasterConfiguration::_signalStart);
+    RETURN_EXECUTE_TIMED_FUNCTION_NOARGS(_signalStart);
 }
 
 Status MasterConfiguration::signalStopStart()
 {
-    return _executeTimedInstruction(&MasterConfiguration::_signalStopStart);
+    RETURN_EXECUTE_TIMED_FUNCTION_NOARGS(_signalStopStart);
 }
 
 Status MasterConfiguration::addressForWriting(uint8_t address)
 {
-    return _executeTimedInstruction(&MasterConfiguration::_addressSlaveW, address);
+    RETURN_EXECUTE_TIMED_FUNCTION(_addressSlaveW, address);
 }
 
 Status MasterConfiguration::addressForReading(uint8_t address)
 {
-    return _executeTimedInstruction(&MasterConfiguration::_addressSlaveR, address);
+    RETURN_EXECUTE_TIMED_FUNCTION(_addressSlaveR, address);
 }
 
 Status MasterConfiguration::sendData(uint8_t data)
 {
-    return _executeTimedInstruction(&MasterConfiguration::_sendData, data);
+    RETURN_EXECUTE_TIMED_FUNCTION(_sendData, data);
 }
 
 Status MasterConfiguration::sendData(const uint8_t *data, size_t size)
 {
-    return _executeTimedInstruction(&MasterConfiguration::_sendData, data, size);
+    RETURN_EXECUTE_TIMED_FUNCTION(_sendData, data, size);
 }
 
 Status MasterConfiguration::receiveData(uint8_t *data)
 {
-    return _executeTimedInstruction(&MasterConfiguration::_receiveData, data);
+    RETURN_EXECUTE_TIMED_FUNCTION(_receiveData, data);
 }
 
 Status MasterConfiguration::receiveData(uint8_t *data, size_t size)
 {
-    return _executeTimedInstruction(&MasterConfiguration::_receiveData, data, size);
+    RETURN_EXECUTE_TIMED_FUNCTION(_receiveData, data, size);
 }

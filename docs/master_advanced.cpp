@@ -51,7 +51,7 @@ void setup()
         // something is wrong (necessary to handle)
         // m.signalStop() or m.signalStopStart() or m.acceptBusLost() or TwoWire::clearError() or nothing
     }
-    if (m.sendData(0x2) != TwoWire::MStatus::Success)
+    if ((s = m.sendData(0x2)) != TwoWire::MStatus::Success)
     {
         // something is wrong (necessary to handle)
         // m.signalStop() or m.signalStopStart() or m.acceptBusLost() or TwoWire::clearError() or nothing
@@ -59,7 +59,7 @@ void setup()
     // or
     data[0] = peripheralSendRegister;
     data[1] = 0x2;
-    if (m.sendData(data, sizeof(data)) != TwoWire::MStatus::Success)
+    if ((s = m.sendData(data, sizeof(data))) != TwoWire::MStatus::Success)
     {
         // something is wrong (necessary to handle)
         // m.signalStop() or m.signalStopStart() or m.acceptBusLost() or TwoWire::clearError() or nothing

@@ -2,6 +2,14 @@
 
 #include "TwoWireMasterConfiguration.hpp"
 
+#define CHECK_RETURN_STATUS(expression) \
+    if (s != Status::Success) \
+    { \
+        if (_handleBadStatus(s, t)) \
+            return expression; \
+        return s; \
+    }
+
 namespace TwoWire
 {
     class MasterConfig : protected MasterConfiguration
@@ -19,6 +27,8 @@ namespace TwoWire
     protected:
         BusLostBehaviour busLostBehaviour;
 
+        bool _handleBadStatus(Status s, uint32_t& t);
+
         Status _send(uint32_t t, uint8_t address, uint8_t data, bool stop);
         Status _send(uint32_t t, uint8_t address, const uint8_t *data, size_t size, bool stop);
 
@@ -27,51 +37,6 @@ namespace TwoWire
 
         Status _receiveRegister(uint32_t t, uint8_t address, uint8_t registerAddress, uint8_t *data, bool repeatStart, bool stop);
         Status _receiveRegister(uint32_t t, uint8_t address, uint8_t registerAddress, uint8_t *data, size_t size, bool repeatStart, bool stop);
-
-        template <typename... Args>
-        Status _handleBusLost(TimeoutFunction<MasterConfig, Args...> f, uint32_t t, Args... args)
-        {
-            switch (busLostBehaviour)
-            {
-            case BusLostBehaviour::RetryExtendingTimeout:
-                t = micros();
-                [[fallthrough]];
-            case BusLostBehaviour::RetryWithinTimeout:
-                return (this->*f)(t, args...);
-            case BusLostBehaviour::Abort:
-                TWCR |= _BV(TWINT);
-            default:
-                return Status::BusLost;
-            }
-        }
-
-        template<typename... Args>
-        Status _handleUnsuccessfulStatus(Status s, TimeoutFunction<MasterConfig, Args...> f, uint32_t t, Args... args)
-        {
-            switch (s)
-            {
-            case Status::BusLost:
-                return _handleBusLost<Args...>(f, t, args...);
-            case Status::AddressNACK:
-            case Status::DataNACK:
-                signalStop();
-                return s;
-            case Status::Error:
-                clearError();
-                return s;
-            default:
-                return s;
-            }
-        }
-
-        template <typename... Args>
-        Status _executeTimedInstruction(TimeoutFunction<MasterConfig, Args...> f, Args... args)
-        {
-            uint32_t t = micros();
-            // Execute instruction
-            return (this->*f)(t, args...);
-        }
-
     public:
         using MasterConfiguration::Status;
 

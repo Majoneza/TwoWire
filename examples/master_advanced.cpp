@@ -94,7 +94,6 @@ void setup()
     TwoWire::signalStop();
 
     // Make it look like TWI wasnt here
-    TwoWire::deactivatePullup();
     TwoWire::disable();
 }
 

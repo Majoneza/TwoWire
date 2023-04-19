@@ -35,7 +35,6 @@ void setup()
     }
 
     // Make it look like TWI wasnt here
-    TwoWire::deactivatePullup();
     TwoWire::disable();
 }
 

@@ -3,6 +3,14 @@
 #include "TwoWireCore.hpp"
 #include <Arduino.h>
 
+#define RETURN_EXECUTE_TIMED_FUNCTION(function, ...) \
+    uint32_t t = micros(); \
+    return function(t, ##__VA_ARGS__)
+
+#define RETURN_EXECUTE_TIMED_FUNCTION_NOARGS(function) \
+    uint32_t t = micros(); \
+    return function(t)
+
 namespace TwoWire
 {
     class MasterConfiguration
@@ -34,9 +42,6 @@ namespace TwoWire
     protected:
         uint32_t timeout;
 
-        template<typename Member, typename... Args>
-        using TimeoutFunction = Status (Member::*)(uint32_t, Args...);
-
         bool _awaitTWINT(uint32_t t);
 
         Status _signalStart(uint32_t t);
@@ -54,14 +59,6 @@ namespace TwoWire
         Status _receiveData(uint32_t t, uint8_t *data);
 
         Status _receiveData(uint32_t t, uint8_t *data, size_t size);
-
-        template <typename... Args>
-        Status _executeTimedInstruction(TimeoutFunction<MasterConfiguration, Args...> f, Args... args)
-        {
-            uint32_t t = micros();
-            // Execute instruction
-            return (this->*f)(t, args...);
-        }
 
     public:
         /**
